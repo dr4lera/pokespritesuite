@@ -86,3 +86,9 @@ The Shade guide sits below Load more Pokémon in the library. Desktop library an
 Pixel opacity sets the alpha of pixels written by Pencil or Fill (0–100%), independently of layer opacity. Pencil replaces the touched pixel so repeated visits keep the requested alpha. Eraser still clears pixels fully. The eyedropper samples the selected layer first and retains its alpha; palette and shade-guide choices also retain pixel alpha. Eight-digit #RRGGBBAA hex colors are accepted. Layered project backups, game PNGs, battle exports and PNG previews retain alpha; GIF supports only binary transparency, and showcase backgrounds are baked in.
 
 Animated editor GIF previews blend partially transparent pixels against the showcase background color before encoding, preserving the appearance of soft shadows. Game PNGs and preview PNGs keep their original alpha.
+
+### Inline Color studio
+Windows opens the in-editor Color studio when the color swatch is clicked, avoiding the legacy system dialog. macOS keeps its native picker, with Color studio available as an extra button on every platform. The inline panel has square/wheel modes, hue and brightness, RGB and RGBA hex, pixel opacity, 16 saved colors, sprite sampling, and screen sampling when the browser supports EyeDropper. It expands within Brush settings rather than covering the artwork.
+
+### Replace exact shade
+Click a numbered shade in the guide, then Replace selected shade. Enter an exact replacement hex and select all frames, this frame, or the selected layer. Matching uses the original RGBA exactly, including hidden layers; near-identical colors are kept separate and locked layers are skipped. Six-digit replacement hex preserves opacity; eight-digit hex sets alpha. Changes support Undo and normal/shiny projects remain separate.
