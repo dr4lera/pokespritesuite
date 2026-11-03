@@ -33,7 +33,7 @@ Unofficial fan-made editor. Pokémon names and artwork belong to their respectiv
 
 Prismatic, Void, and Prismatic + Void can be previewed over normal, shiny, or gilded source art. The body color filters follow the shipped game's coefficients; animated rainbow facets are a canvas approximation for portable GIF/PNG previews. These effects are not baked into game sprite sheets. Prismatic GIFs use a 12-frame color cycle with alternating walking steps.
 
-The editor always loads normal base art. Shiny, gilded, Prismatic, and Void are read-only preview options. For edited sprites, shiny previews map matching original palette colors (new custom colors stay unchanged); gilded previews also tint new colors. Changing preview options never changes the editable project or game PNG. The showcase maker exports these read-only looks as GIF/PNG.
+The editor starts with normal base art. The optional Edit shiny costume art checkbox enables a separate, editable shiny version; gilded, Prismatic, Void, and Spectral remain preview effects. For edited sprites, shiny previews map matching original palette colors (new custom colors stay unchanged); gilded previews also tint new colors. Changing preview options never changes the editable project or game PNG; editing the optional shiny artwork changes only its own shiny files. The showcase maker exports these read-only looks as GIF/PNG.
 
 ## Walking and battle workspaces
 
@@ -51,6 +51,17 @@ Both walking and battle editors support pencil, eraser, fill, eyedropper, 1/2/4p
 
 ## Complete battle sets
 
-The Battle Set overview shows every front frame plus the back sprite for the current Pokémon. The original game catalog requires two front frames for 890 entries, one front frame for 407 entries, and one back frame for each of all 1,297 entries. It does not specify separate attack/hurt sprite sheets. Click any overview thumbnail to edit that exact frame. Other sides use matching saved project art when available, otherwise their original normal base art; unrelated Pokémon projects are never included in the same set.
+The Battle Set overview shows every front frame plus the back sprite for the current Pokémon. The original game catalog requires two front frames for 890 entries, one front frame for 407 entries, and one back frame for each of all 1,297 entries. It does not specify separate attack/hurt sprite sheets. Click any overview thumbnail to edit that exact frame. Other sides use matching saved project art when available, otherwise their original selected normal/shiny base art; unrelated Pokémon projects are never included in the same set.
 
 Battle ZIP exports `front.png` (vertical frames), `back.png` (one native square), individual frame PNGs, and `battle-layout.json` with the exact dimensions and art sources. Missing art or required frames blocks complete-set export until supplied. Preview variants and backgrounds are excluded from game files.
+
+
+## Optional shiny costume artwork
+
+Edit shiny costume art is unchecked by default. Enable it to reveal Normal art / Shiny art controls in both walking and battle editors. Each art version keeps independent pixels, Undo/Redo, and saved projects. Switching the checkbox off returns to normal editing while retaining shiny work for later. Unmodified library sprites initialize from the exact bundled shiny sheet; existing costume art starts with a recolored copy that you can customize. Front/back selection stays on the same Pokémon.
+
+Single-sheet game exports use ow/ows, front/fronts, or back/backs names. With shiny editing enabled, Battle ZIP includes separate `front.png`, `back.png`, `fronts.png`, and `backs.png` plus their individual frames. With it disabled, Battle ZIP includes normal artwork only. Version 2 project JSON backups carry both matching art versions and reopen them together. Showcase exports use your hand-edited shiny artwork when available.
+
+## Shade assist
+
+Shade assist (H) is a display-only editing view for distinguishing nearly identical shades. It assigns contrasting display colors and unique shade numbers; numbers appear on pixels at zoom 10× or higher. The Shade guide shows original colors beside their assist colors and numbers, with the active frame's pixel counts. Click a guide row to paint that original color. Hovering a pixel shows its real hex value and shade number. Both editors support this view; saved projects, normal/shiny game sheets, live previews, and showcase exports retain the real colors.
