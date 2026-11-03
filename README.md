@@ -28,3 +28,7 @@ Game PNGs contain only walking sprites; preview labels, portraits, and backgroun
 ## Credits
 
 Unofficial fan-made editor. Pokémon names and artwork belong to their respective owners. Source sprite assets come from the publicly distributed Tallgrass v0.64.11 game release. This project is not affiliated with Nintendo, Game Freak, The Pokémon Company, or Tallgrass.
+
+## Runtime effect previews
+
+Prismatic, Void, and Prismatic + Void can be previewed over normal, shiny, or gilded source art. The body color filters follow the shipped game's coefficients; animated rainbow facets are a canvas approximation for portable GIF/PNG previews. These effects are not baked into game sprite sheets. Prismatic GIFs use a 12-frame color cycle with alternating walking steps.
