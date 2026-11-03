@@ -3,7 +3,7 @@
 const shareMenu=document.createElement('div');
 shareMenu.className='share-menu';shareMenu.hidden=true;shareMenu.setAttribute('role','menu');document.body.append(shareMenu);
 const shareDialog=document.createElement('dialog');
-shareDialog.className='share-dialog';shareDialog.innerHTML='<button class="close" aria-label="Close preview">×</button><h2>Ready to share</h2><p class="share-help"></p><img alt="Exported sprite preview"><div class="actions"><button class="button primary">Save file</button></div>';
+shareDialog.className='share-dialog';shareDialog.innerHTML='<button class="close" aria-label="Close preview">×</button><h2>Ready to share</h2><p class="share-help"></p><img alt="Exported sprite preview"><div class="actions"><button class="button subtle" data-share-copy>Copy image (still)</button><button class="button subtle" data-share-file hidden>Share GIF file</button><button class="button primary" data-share-save>Save file</button></div>';
 document.body.append(shareDialog);
 let shareUrl;
 shareDialog.querySelector('.close').onclick=()=>shareDialog.close();
@@ -25,8 +25,25 @@ function shareFilename(target,animated){return (target==='showcase'?'pokesprites
 function openShareFile(blob,target,animated,message){
  if(shareDialog.open)shareDialog.close();
  shareUrl=URL.createObjectURL(blob);shareDialog.querySelector('img').src=shareUrl;
- shareDialog.querySelector('.share-help').textContent=message||'Right-click or touch and hold the image to copy or save it. Some apps paste GIFs as still images; save and attach the GIF file to keep animation.';
- shareDialog.querySelector('.actions button').onclick=()=>download(blob,shareFilename(target,animated));shareDialog.showModal();
+ const help=shareDialog.querySelector('.share-help'),filename=shareFilename(target,animated);
+ help.textContent=message||(animated?'Copy image copies a still frame. To send the animation, save the GIF and attach it in chat. This preview is local to your browser; its image address is not a shareable link.':'Copy this image or save the PNG file. This preview is local; its image address is not a shareable link.');
+ const copy=shareDialog.querySelector('[data-share-copy]');copy.textContent=animated?'Copy image (still)':'Copy image';
+ copy.onclick=async()=>{
+  try{
+   if(!navigator.clipboard?.write||!window.ClipboardItem)throw Error('Image copying is unavailable in this browser. Save the file instead.');
+   const im=shareDialog.querySelector('img'),c=canvas(im.naturalWidth,im.naturalHeight);
+   if(!im.complete||!im.naturalWidth)throw Error('The preview is still loading. Try again.');
+   ctx(c).drawImage(im,0,0);
+   const png=new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('Could not create image')),'image/png'));
+   await navigator.clipboard.write([new ClipboardItem({'image/png':png})]);
+   help.textContent=animated?'Still image copied. Save and attach the GIF file to send the animation.':'Image copied. Paste it into your chat.';toast(animated?'Still image copied':'Image copied');
+  }catch(error){help.textContent=error.message+' Use Save file to download and attach the image.'}
+ };
+ shareDialog.querySelector('[data-share-save]').onclick=()=>download(blob,filename);
+ const file=new File([blob],filename,{type:blob.type}),share=shareDialog.querySelector('[data-share-file]');
+ share.hidden=!animated||!navigator.share||!navigator.canShare?.({files:[file]});
+ share.onclick=async()=>{try{await navigator.share({files:[file]})}catch(error){if(error.name!=='AbortError')help.textContent='Sharing is unavailable here. Save the GIF and attach it in chat.'}};
+ shareDialog.showModal();
 }
 async function shareAction(target,action){
  shareMenu.hidden=true;if(!shareReady(target))return;
@@ -36,15 +53,15 @@ async function shareAction(target,action){
   if(action.startsWith('save')){download(await blobPromise,shareFilename(target,animated));toast(animated?'Animated GIF saved':'Preview image saved');return}
   const type=animated?'image/gif':'image/png';
   if(action.startsWith('open')||!navigator.clipboard?.write||!window.ClipboardItem||(animated&&(!ClipboardItem.supports||!ClipboardItem.supports(type)))){
-   openShareFile(await blobPromise,target,animated,animated?'Your animated GIF is ready. Right-click or touch and hold to copy or save. To preserve animation in every app, save and attach the GIF file.':'Right-click or touch and hold this image to copy or save it.');return;
+   openShareFile(await blobPromise,target,animated);return;
   }
   try{await navigator.clipboard.write([new ClipboardItem({[type]:blobPromise})]);toast(animated?'Animated GIF copied':'Image copied')}
-  catch(error){openShareFile(await blobPromise,target,animated,'Your browser could not copy automatically. Right-click or touch and hold the image to copy it, or save the file below.')}
+  catch(error){openShareFile(await blobPromise,target,animated,'Automatic copying was blocked. Try Copy image below, or save and attach the file. The preview address is local and cannot be shared.')}
  }catch(error){toast('Could not share preview: '+error.message)}
 }
 function openShareMenu(target,x,y){
  if(!shareReady(target))return;shareMenu.replaceChildren();
- for(const [action,label] of [['copy-png','Copy image'],['copy-gif','Copy / open animated GIF'],['save-png','Save image (PNG)'],['save-gif','Save animated GIF'],['open-png','Open image preview']]){
+ for(const [action,label] of [['copy-png','Copy image'],['copy-gif','Open / share animated GIF'],['save-png','Save image (PNG)'],['save-gif','Save animated GIF'],['open-png','Open image preview']]){
   const b=document.createElement('button');b.textContent=label;b.setAttribute('role','menuitem');b.onclick=()=>shareAction(target,action);shareMenu.append(b);
  }
  shareMenu.hidden=false;shareMenu.style.left=Math.max(8,Math.min(x,innerWidth-shareMenu.offsetWidth-8))+'px';shareMenu.style.top=Math.max(8,Math.min(y,innerHeight-shareMenu.offsetHeight-8))+'px';shareMenu.firstElementChild.focus();

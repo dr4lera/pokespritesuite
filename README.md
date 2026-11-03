@@ -68,3 +68,5 @@ Shade assist (H) is a display-only editing view for distinguishing nearly identi
 
 ### Preview sharing
 Right-click the live preview or showcase for Copy image, animated GIF preview, and PNG/GIF saving. Copy image buttons and the preview options button also work without a mouse. GIF clipboard support varies by browser; unsupported browsers open the actual GIF for native copying or saving. Attach the saved GIF to preserve animation. Preview exports include selected effects while game PNGs retain source pixels.
+
+GIF previews include an explicit Copy image (still) control and, where supported, Share GIF file. Preview URLs are browser-local, not public share links. Download and attach the GIF to preserve animation.
