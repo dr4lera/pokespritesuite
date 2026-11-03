@@ -34,7 +34,7 @@ function renderColorStudio(){
  $('studioBrightness').style.background='linear-gradient(to right,#000,'+studioHexFromRgb(hsvRgb(studioH,studioS,1))+')';
 }
 function applyStudioColor(){studioApplying=true;try{setColor(studioHexFromRgb(hsvRgb(studioH,studioS,studioV)));$('hex').value=brushHex()}finally{studioApplying=false}renderColorStudio()}
-function openColorStudio(){colorStudio.hidden=false;studioButton.setAttribute('aria-expanded','true');syncColorStudio();renderStudioSwatches();$('studioStatus').textContent=window.EyeDropper?'Use Screen for any screen color, or Sprite for a pixel in your artwork.':'Screen sampling is unavailable in this browser. Sprite still picks colors from your artwork.'}
+function openColorStudio(){colorStudio.hidden=false;studioButton.setAttribute('aria-expanded','true');syncColorStudio();renderStudioSwatches();$('studioStatus').textContent=window.EyeDropper?'Use Screen for any screen color, or Sprite for a pixel in your artwork.':'Screen opens a capture picker. Image lets you sample an uploaded screenshot.'}
 function closeColorStudio(){colorStudio.hidden=true;studioButton.setAttribute('aria-expanded','false');studioButton.focus()}
 studioButton.onclick=()=>colorStudio.hidden?openColorStudio():closeColorStudio();$('studioClose').onclick=closeColorStudio;
 // macOS keeps its native picker. Windows uses the inline studio automatically.
