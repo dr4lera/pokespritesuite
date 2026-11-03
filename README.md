@@ -73,3 +73,9 @@ GIF previews include an explicit Copy image (still) control and, where supported
 
 ### Hosted sharing
 Create share link explicitly uploads the generated preview to sxcu.net with its anonymous API and returns a direct GIF/PNG URL. Copy link, Open link, and Manage/delete upload are displayed after success. No uploads happen automatically. Device sharing has visible success, cancellation, and error messages. Hosting is provided by a third party, without a permanence guarantee.
+
+### Frame layers
+Walking and battle frames have independent stacks (up to 32 layers each). Add, duplicate, rename, reorder, hide, lock, change opacity, merge down or delete layers. Brushes, fill, eraser, clear and flip affect the selected unlocked visible layer. Copy previous frame copies its entire stack; resize preserves every layer. Undo/redo, local drafts, normal/shiny projects and version 3 project JSON retain stacks. Older PNGs and project files open as Base art. Game PNGs, battle ZIPs, showcases and sharing flatten visible layers.
+Shortcuts while outside text fields: [ / ] select lower/upper layer, N new, D duplicate, V visibility, L lock. Existing drawing and undo shortcuts remain available.
+
+Copy/Cut/Paste layers using panel buttons or Ctrl/⌘C/X/V outside text fields. The in-tab layer clipboard works across walking/battle frames and Normal/Shiny art. Pasting creates an independent layer, centered horizontally and aligned to the bottom within the destination frame. Cut and Paste support Undo. Copying a layer does not overwrite the system clipboard.
