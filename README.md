@@ -79,3 +79,5 @@ Walking and battle frames have independent stacks (up to 32 layers each). Add, d
 Shortcuts while outside text fields: [ / ] select lower/upper layer, N new, D duplicate, V visibility, L lock. Existing drawing and undo shortcuts remain available.
 
 Copy/Cut/Paste layers using panel buttons or Ctrl/⌘C/X/V outside text fields. The in-tab layer clipboard works across walking/battle frames and Normal/Shiny art. Pasting creates an independent layer, centered horizontally and aligned to the bottom within the destination frame. Cut and Paste support Undo. Copying a layer does not overwrite the system clipboard.
+
+The Shade guide sits below Load more Pokémon in the library. Desktop library and guide remain beside the canvas while the shade rows scroll independently. On mobile the guide stays below the Pokémon browser.
