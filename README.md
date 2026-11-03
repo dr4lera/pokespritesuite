@@ -65,3 +65,6 @@ Single-sheet game exports use ow/ows, front/fronts, or back/backs names. With sh
 ## Shade assist
 
 Shade assist (H) is a display-only editing view for distinguishing nearly identical shades. It assigns contrasting display colors and unique shade numbers; numbers appear on pixels at zoom 10× or higher. The Shade guide shows original colors beside their assist colors and numbers, with the active frame's pixel counts. Click a guide row to paint that original color. Hovering a pixel shows its real hex value and shade number. Both editors support this view; saved projects, normal/shiny game sheets, live previews, and showcase exports retain the real colors.
+
+### Preview sharing
+Right-click the live preview or showcase for Copy image, animated GIF preview, and PNG/GIF saving. Copy image buttons and the preview options button also work without a mouse. GIF clipboard support varies by browser; unsupported browsers open the actual GIF for native copying or saving. Attach the saved GIF to preserve animation. Preview exports include selected effects while game PNGs retain source pixels.
