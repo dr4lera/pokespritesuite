@@ -32,3 +32,11 @@ Unofficial fan-made editor. Pokémon names and artwork belong to their respectiv
 ## Runtime effect previews
 
 Prismatic, Void, and Prismatic + Void can be previewed over normal, shiny, or gilded source art. The body color filters follow the shipped game's coefficients; animated rainbow facets are a canvas approximation for portable GIF/PNG previews. These effects are not baked into game sprite sheets. Prismatic GIFs use a 12-frame color cycle with alternating walking steps.
+
+The editor always loads normal base art. Shiny, gilded, Prismatic, and Void are read-only preview options. For edited sprites, shiny previews map matching original palette colors (new custom colors stay unchanged); gilded previews also tint new colors. Changing preview options never changes the editable project or game PNG. The showcase maker exports these read-only looks as GIF/PNG.
+
+## Walking and battle workspaces
+
+Walking sprites and Battle sprites are separate tabs, with independent local projects and undo histories. Battle has Front and Back projects. Front art uses the original 64×64 frames stacked vertically (64×64 or 64×128 exports). Back art uses the original square resolution: 64×64, 96×96, or 120×120. Painting remains clipped to the chosen game frame. Imported battle PNGs must match these native formats. Switching workspaces preserves their current art; project backups record the workspace and layout.
+
+Adding a project to the showcase also gathers the edited front/walking art for the same species from the other workspace, when available, so one lineup row can show your new portrait alongside your new walking sprites. Preview variants never change these projects.
