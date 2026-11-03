@@ -48,3 +48,9 @@ Spectral is available in the walking/battle preview effect selector and as a sho
 ## Editing shortcuts and quality of life
 
 Both walking and battle editors support pencil, eraser, fill, eyedropper, 1/2/4px brushes, palette picking, undo/redo, copy previous frame, horizontal flip, onion skin, pixel grid, and automatic local saving. Ctrl/Command Z undoes; Ctrl Y or Command Shift Z redoes; left/right arrows or 1–6 select frames; Space pauses/plays preview; F fits the canvas to its workspace. Shortcuts are ignored while typing into inputs.
+
+## Complete battle sets
+
+The Battle Set overview shows every front frame plus the back sprite for the current Pokémon. The original game catalog requires two front frames for 890 entries, one front frame for 407 entries, and one back frame for each of all 1,297 entries. It does not specify separate attack/hurt sprite sheets. Click any overview thumbnail to edit that exact frame. Other sides use matching saved project art when available, otherwise their original normal base art; unrelated Pokémon projects are never included in the same set.
+
+Battle ZIP exports `front.png` (vertical frames), `back.png` (one native square), individual frame PNGs, and `battle-layout.json` with the exact dimensions and art sources. Missing art or required frames blocks complete-set export until supplied. Preview variants and backgrounds are excluded from game files.
