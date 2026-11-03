@@ -15,7 +15,7 @@ function previewBlob(target,animated){
  const c=target==='showcase'?show:preview,x=ctx(c),images=[];
  if(animated){
   const count=target==='showcase'?(selectedVariants().some(v=>v.includes('prismatic')||v==='spectral')?12:2):($('previewEffect').value!=='none'?12:mode==='walk'?2:frames.length);
-  try{for(let i=0;i<count;i++){if(target==='showcase')drawShowcase(i);else renderPreview(i,true);images.push(x.getImageData(0,0,c.width,c.height))}}
+  try{for(let i=0;i<count;i++){if(target==='showcase')drawShowcase(i);else renderPreview(i,true);if(target==='showcase')images.push(x.getImageData(0,0,c.width,c.height));else{const matte=canvas(c.width,c.height),mx=ctx(matte);mx.fillStyle=$('bgColor').value;mx.fillRect(0,0,c.width,c.height);mx.drawImage(c,0,0);images.push(mx.getImageData(0,0,c.width,c.height))}}}
   finally{if(target==='showcase')drawShowcase(tick%12);else renderPreview()}
   return Promise.resolve(encodeGif(images,Math.round(100/+(target==='showcase'?$('showFps').value:$('fps').value))));
  }

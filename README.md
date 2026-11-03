@@ -81,3 +81,8 @@ Shortcuts while outside text fields: [ / ] select lower/upper layer, N new, D du
 Copy/Cut/Paste layers using panel buttons or Ctrl/⌘C/X/V outside text fields. The in-tab layer clipboard works across walking/battle frames and Normal/Shiny art. Pasting creates an independent layer, centered horizontally and aligned to the bottom within the destination frame. Cut and Paste support Undo. Copying a layer does not overwrite the system clipboard.
 
 The Shade guide sits below Load more Pokémon in the library. Desktop library and guide remain beside the canvas while the shade rows scroll independently. On mobile the guide stays below the Pokémon browser.
+
+### Per-pixel transparency
+Pixel opacity sets the alpha of pixels written by Pencil or Fill (0–100%), independently of layer opacity. Pencil replaces the touched pixel so repeated visits keep the requested alpha. Eraser still clears pixels fully. The eyedropper samples the selected layer first and retains its alpha; palette and shade-guide choices also retain pixel alpha. Eight-digit #RRGGBBAA hex colors are accepted. Layered project backups, game PNGs, battle exports and PNG previews retain alpha; GIF supports only binary transparency, and showcase backgrounds are baked in.
+
+Animated editor GIF previews blend partially transparent pixels against the showcase background color before encoding, preserving the appearance of soft shadows. Game PNGs and preview PNGs keep their original alpha.
