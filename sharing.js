@@ -59,8 +59,11 @@ function setupHostedSharing(blob,filename,session){
  }
  upload.hidden=false;if(hostedPreviews.has(blob))present(hostedPreviews.get(blob));
  shareDialog.querySelector('[data-host-copy]').onclick=async()=>{
-  try{await navigator.clipboard.writeText(input.value);status.textContent='Link copied. Paste it in your chat.';toast('Share link copied')}
-  catch(error){input.focus();input.select();status.textContent='Copy was blocked. The link is selected: press Ctrl+C or ⌘C.'}
+  status.textContent='Copying link…';
+  let copyTimeout;
+  try{await Promise.race([navigator.clipboard.writeText(input.value),new Promise((_,reject)=>{copyTimeout=setTimeout(()=>reject(Error('Clipboard unavailable')),1800)})]);status.textContent='Link copied. Paste it in your chat.';toast('Share link copied')}
+  catch(error){input.focus();input.select();status.textContent='The link is selected: press Ctrl+C or ⌘C to copy, or touch and hold it on mobile.'}
+  finally{clearTimeout(copyTimeout);}
  };
  upload.onclick=async()=>{
   if(upload.disabled)return;
