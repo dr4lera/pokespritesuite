@@ -40,3 +40,11 @@ The editor always loads normal base art. Shiny, gilded, Prismatic, and Void are 
 Walking sprites and Battle sprites are separate tabs, with independent local projects and undo histories. Battle has Front and Back projects. Front art uses the original 64×64 frames stacked vertically (64×64 or 64×128 exports). Back art uses the original square resolution: 64×64, 96×96, or 120×120. Painting remains clipped to the chosen game frame. Imported battle PNGs must match these native formats. Switching workspaces preserves their current art; project backups record the workspace and layout.
 
 Adding a project to the showcase also gathers the edited front/walking art for the same species from the other workspace, when available, so one lineup row can show your new portrait alongside your new walking sprites. Preview variants never change these projects.
+
+## Spectral previews
+
+Spectral is available in the walking/battle preview effect selector and as a showcase column, over normal, shiny, or gilded art. Its pale teal / shiny gold palette, retained outline/highlights, and breathing transparency follow Tallgrass's shipped season renderer. Floating wisps are approximated on canvas. Spectral GIFs use 12 frames for the breathing loop. Preview effects never modify editable pixels or game PNG exports.
+
+## Editing shortcuts and quality of life
+
+Both walking and battle editors support pencil, eraser, fill, eyedropper, 1/2/4px brushes, palette picking, undo/redo, copy previous frame, horizontal flip, onion skin, pixel grid, and automatic local saving. Ctrl/Command Z undoes; Ctrl Y or Command Shift Z redoes; left/right arrows or 1–6 select frames; Space pauses/plays preview; F fits the canvas to its workspace. Shortcuts are ignored while typing into inputs.
