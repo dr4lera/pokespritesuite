@@ -21,8 +21,9 @@ $('referenceToggle').onchange=()=>setReferenceVisible($('referenceToggle').check
 $('referenceClose').onclick=()=>{setReferenceVisible(false);$('referenceToggle').focus()};
 $('referenceReset').onclick=()=>{const viewport=referenceBounds();referenceLayout={...referenceLayout,x:Math.max(8,viewport.width-340),y:100,width:320,height:360};clampReference();saveReferenceLayout()};
 $('referenceOpacity').oninput=()=>{referenceLayout.opacity=+$('referenceOpacity').value;updateReferenceOpacity()};
-$('referenceTrace').checked=referenceLayout.trace;referencePanel.classList.toggle('trace-through',referenceLayout.trace);
-$('referenceTrace').onchange=()=>{referenceLayout.trace=$('referenceTrace').checked;if(referenceLayout.trace&&referenceLayout.opacity===100){referenceLayout.opacity=50;updateReferenceOpacity()}referencePanel.classList.toggle('trace-through',referenceLayout.trace);saveReferenceLayout()};
+function updateReferenceTrace(){referencePanel.classList.toggle('trace-through',referenceLayout.trace&&!!referenceUrl);$('referenceTrace').disabled=!referenceUrl}
+$('referenceTrace').checked=referenceLayout.trace;updateReferenceTrace();
+$('referenceTrace').onchange=()=>{referenceLayout.trace=$('referenceTrace').checked;if(referenceLayout.trace&&referenceLayout.opacity===100){referenceLayout.opacity=50;updateReferenceOpacity()}updateReferenceTrace();saveReferenceLayout()};
 updateReferenceOpacity();
 function startReferenceGesture(e,kind){if(e.button!==0)return;if(kind==='move'&&e.target.closest('button,input,label'))return;e.preventDefault();referenceGesture={kind,id:e.pointerId,startX:e.clientX,startY:e.clientY,...referenceLayout};e.currentTarget.setPointerCapture(e.pointerId);referencePanel.classList.add('moving')}
 function moveReferenceGesture(e){if(!referenceGesture||referenceGesture.id!==e.pointerId)return;const dx=e.clientX-referenceGesture.startX,dy=e.clientY-referenceGesture.startY;if(referenceGesture.kind==='move'){referenceLayout.x=referenceGesture.x+dx;referenceLayout.y=referenceGesture.y+dy}else{const viewport=referenceBounds();referenceLayout.width=Math.min(viewport.width-referenceLayout.x-8,referenceGesture.width+dx);referenceLayout.height=Math.min(viewport.height-referenceLayout.y-8,referenceGesture.height+dy)}clampReference()}
@@ -31,14 +32,41 @@ for(const [id,kind] of [['referenceHandle','move'],['referenceResize','resize']]
 referencePanel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();setReferenceVisible(false);$('referenceToggle').focus()}e.stopPropagation()});
 window.addEventListener('resize',()=>{if(!referencePanel.hidden){clampReference();saveReferenceLayout()}});
 $('referenceUpload').onclick=$('referenceChoose').onclick=()=>$('referenceInput').click();
+async function showReferenceSource(source,name,owned=false){
+ const token=++referenceLoadToken,probe=new Image();$('referenceStatus').textContent='Loading reference…';
+ try{await new Promise((resolve,reject)=>{probe.onload=resolve;probe.onerror=()=>reject(Error('Could not load that image. Save it and use Upload image instead.'));probe.src=source});if(token!==referenceLoadToken){if(owned)URL.revokeObjectURL(source);return}
+  const old=referenceUrl;referenceUrl=source;$('referenceImage').src=source;$('referenceImage').alt='Reference: '+name;$('referenceImage').hidden=false;$('referenceChoose').hidden=true;$('referenceUpload').textContent='↥ Replace image';$('referenceStatus').textContent=name+' · '+probe.naturalWidth+' × '+probe.naturalHeight;$('referenceStatus').title='Reference is not included in sprite exports.';if(old&&old.startsWith('blob:'))URL.revokeObjectURL(old);updateReferenceTrace();
+ }catch(error){if(owned)URL.revokeObjectURL(source);if(token===referenceLoadToken)$('referenceStatus').textContent=error.message}
+}
 async function loadReferenceImage(file){
- if(!file||!/^image\/(png|jpeg|gif|webp|avif|bmp)$/i.test(file.type)){$('referenceStatus').textContent='Choose a PNG, JPEG, GIF, WebP, AVIF or BMP image.';return}
+ if(!file){$('referenceStatus').textContent='Drop an image file or image from a browser.';return}
+ const imageType=/^image\/(png|jpeg|gif|webp|avif|bmp|x-ms-bmp)$/i.test(file.type),imageName=/\.(png|jpe?g|gif|webp|avif|bmp)$/i.test(file.name||'');
+ if(!imageType&&!imageName){$('referenceStatus').textContent='Choose a PNG, JPEG, GIF, WebP, AVIF or BMP image.';return}
  if(file.size>20*1024*1024){$('referenceStatus').textContent='Choose an image smaller than 20 MB.';return}
- const token=++referenceLoadToken,url=URL.createObjectURL(file),probe=new Image();$('referenceStatus').textContent='Loading reference…';
- try{await new Promise((resolve,reject)=>{probe.onload=resolve;probe.onerror=()=>reject(Error('Could not read this image.'));probe.src=url});if(token!==referenceLoadToken){URL.revokeObjectURL(url);return}
-  const old=referenceUrl;referenceUrl=url;$('referenceImage').src=url;$('referenceImage').alt='Reference: '+file.name;$('referenceImage').hidden=false;$('referenceChoose').hidden=true;$('referenceUpload').textContent='↥ Replace image';$('referenceStatus').textContent=file.name+' · '+probe.naturalWidth+' × '+probe.naturalHeight;$('referenceStatus').title='Reference stays on this device; sprite exports are unaffected.';if(old)URL.revokeObjectURL(old);
- }catch(error){URL.revokeObjectURL(url);if(token===referenceLoadToken)$('referenceStatus').textContent=error.message}
+ await showReferenceSource(URL.createObjectURL(file),file.name,true);
 }
 $('referenceInput').onchange=async e=>{await loadReferenceImage(e.target.files[0]);e.target.value=''};
-$('referenceDropzone').ondragover=e=>{e.preventDefault();$('referenceDropzone').classList.add('drag-over')};$('referenceDropzone').ondragleave=()=>$('referenceDropzone').classList.remove('drag-over');$('referenceDropzone').ondrop=e=>{e.preventDefault();$('referenceDropzone').classList.remove('drag-over');loadReferenceImage(e.dataTransfer.files[0])};
-window.addEventListener('pagehide',()=>{if(referenceUrl)URL.revokeObjectURL(referenceUrl)});
+function clearReferenceDrop(){referencePanel.classList.remove('receiving-drop');$('referenceDropzone').classList.remove('drag-over')}
+function droppedReferenceUrl(transfer){
+ const html=transfer.getData('text/html'),sources=[];
+ if(html){const doc=new DOMParser().parseFromString(html,'text/html');sources.push(doc.querySelector('img')?.getAttribute('src')||'')}
+ sources.push(...transfer.getData('text/uri-list').split(/\r?\n/).filter(line=>line.trim()&&!line.startsWith('#')),transfer.getData('text/plain'));
+ for(const candidate of sources){const source=candidate.trim();if(/^data:image\/(png|jpeg|gif|webp|avif|bmp);/i.test(source))return source;try{const url=new URL(source);if(['http:','https:','blob:'].includes(url.protocol))return url.href}catch{}}
+ return null;
+}
+referencePanel.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();if(e.dataTransfer)e.dataTransfer.dropEffect='copy';$('referenceDropzone').classList.add('drag-over')},true);
+async function handleReferenceDrop(e){
+ e.preventDefault();e.stopPropagation();clearReferenceDrop();const transfer=e.dataTransfer;if(!transfer)return;
+ const files=[...transfer.files];for(const item of transfer.items||[])if(item.kind==='file'){const file=item.getAsFile();if(file&&!files.includes(file))files.push(file)}
+ const file=files.find(file=>/^image\//i.test(file.type)||/\.(png|jpe?g|gif|webp|avif|bmp)$/i.test(file.name||''))||files[0];
+ if(file){await loadReferenceImage(file);return}
+ const source=droppedReferenceUrl(transfer);if(!source){$('referenceStatus').textContent='Drop an image file, or save the picture and use Upload image.';return}
+ let name='Dropped image';try{name=decodeURIComponent(new URL(source).pathname.split('/').pop())||name}catch{}
+ await showReferenceSource(source,name);
+}
+referencePanel.addEventListener('drop',handleReferenceDrop,true);
+window.addEventListener('dragenter',()=>{if(!referencePanel.hidden)referencePanel.classList.add('receiving-drop')});
+window.addEventListener('dragover',e=>{if(referencePanel.hidden)return;referencePanel.classList.add('receiving-drop');const r=referencePanel.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='copy'}},true);
+window.addEventListener('drop',e=>{if(referencePanel.hidden||referencePanel.contains(e.target))return;const r=referencePanel.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom)handleReferenceDrop(e)},true);
+window.addEventListener('dragleave',e=>{if(!e.relatedTarget)clearReferenceDrop()});window.addEventListener('dragend',clearReferenceDrop);window.addEventListener('drop',clearReferenceDrop);
+window.addEventListener('pagehide',e=>{if(!e.persisted&&referenceUrl?.startsWith('blob:'))URL.revokeObjectURL(referenceUrl)});
